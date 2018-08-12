@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <script type="text/javascript" src="loader.js"></script>
+    <script type="text/javascript">
+    	
+    	var total, present;
+    	
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'a.php'); // registration count
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState==4 && xhr.status==200){
+				total = xhr.responseText;
+				var xhr2 = new XMLHttpRequest();
+				xhr2.open('GET', 'b.php');
+				xhr2.onreadystatechange = function() {
+					if(xhr2.readyState == 4 && xhr2.status == 200){
+						present = xhr2.responseText;
+						
+						
+								
+       google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Total Present', 'Total Strength', {role : 'style'}],
+          ['first', present , total, 'stroke-width: 10'],
+          
+          
+        ]);
+
+        var options = {
+          chart: {
+            title: 'Attendance status',
+            subtitle: 'computer science',
+                
+        chartArea: {width: '50%'},
+          }
+        };
+
+    
+      var chart = new google.charts.Bar(document.getElementById('dual_y_div'));
+      chart.draw(data, options);
+    };
+						
+						
+						
+					}
+				};
+				xhr2.send(null);
+			}
+		};
+		xhr.send(null);
+		
+		
+
+
+</script>
+  </head>
+  <body>
+    <div id="dual_y_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
+

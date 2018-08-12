@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	
+	<title>Info</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var xhr = new XMLHttpRequest();
+		var url = "http://192.168.0.34:8081/";
+
+		xhr.onreadystatechange = function() {
+			if(xhr.readyState == 4 && xhr.status == 200){
+				var Data = JSON.parse(xhr.responseText);
+				myfunc(Data);
+			}
+		};
+
+		xhr.open('GET', url, true);
+		xhr.send();
+
+		
+		function myfunc(Data) {
+    	var d =  {
+    		id: Data[0].id,
+    		time: Data[0].time
+    	};
+    	
+   		$.ajax({
+   			type: "POST",
+   			url: "check.php",
+   			data: d,
+   			dataType: 'text',
+   			success: function(response){
+				document.getElementById("disp").innerHTML = response;
+ 			}
+ 		});
+ 		}
+ 		
+		
+
+	</script>
+</head>
+<body>
+	<h1>Smart attendance system</h1><hr/>
+	<p id="disp"></p>
+
+	
+	<meta http-equiv="refresh" content="2">
+</body>
+</html>

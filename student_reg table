@@ -1,0 +1,36 @@
+create table student_reg(
+firstname varchar(20) not null,
+lastname varchar(20) not null,
+dob varchar(10) not null,
+branch varchar(40) not null,
+sem varchar(10) not null,
+usn varchar(20) primary key,
+phone varchar(12) not null,
+email varchar(40)  not null,
+pwd varchar(30) not null,
+confpwd varchar(30) not null,
+fathname varchar(40) not null,
+mothname varchar(40) not null,
+parphone varchar(12) not null,
+raddress varchar(80) not null,
+paddress varchar(80) not null
+);
+
+
+
+
+
+
+ create table register(
+ fname varchar(40) not null,
+ lname varchar(30) not null,
+ branch varchar(10) not null,
+ email varchar(40) not null,
+ phone varchar(20) not null,
+ sem int not null,
+ id int primary key,
+ address varchar(50) not null);
+ 
+ create table attendance(
+ id int primary key,
+ time varchar(20) not null);

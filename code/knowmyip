@@ -1,0 +1,7 @@
+void setup(){
+  Serial.begin(9600);
+  system("ifconfig > /dev/ttyGS0");
+}
+
+void loop() {
+ }

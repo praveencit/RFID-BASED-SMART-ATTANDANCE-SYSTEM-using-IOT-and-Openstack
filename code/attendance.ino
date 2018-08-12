@@ -1,0 +1,176 @@
+/*
+#####################################################################################
+#    RFID Attendance System 
+#   Team Leader : Mabast Ahmad
+#   Team Members: Maksat Taganov
+#                 Douglas Perez
+#                 Bakhromjon Kamolov
+#                 Andi Alla 
+#         
+#####################################################################################
+ 
+*/
+
+// Libraries
+#include <SPI.h>
+#include <RFID.h>
+#include "pitches.h"
+#include <Ethernet.h>
+#include <LiquidCrystal.h>
+FILE* tempFile;
+FILE* timestamp;
+
+
+byte mac[] = { 0x98, 0x4F, 0xEE, 0x01, 0xCD, 0xDD };
+byte ip[] = {172,16,1,167}; // Direction ip local
+char server[]={"example.com"};
+int i;
+EthernetClient client;
+
+// RFID definition
+RFID rfid(10,9);
+//byte USER[2] = {158,212 }; // Define serial here
+//Put here the another allowed cards
+
+//LCD address and type declaration
+//LiquidCrystal lcd(9, 8, 7, 4, 3, 2);
+byte serNum[5];
+int data;
+void setup(){ 
+  Serial.begin(9600);
+  Ethernet.begin(mac, ip); //Initiation ethernet shield
+  delay(1000); // Waiting 1 second after initializing
+  //lcd.begin(16, 2);
+  //lcd.print(Ethernet.localIP());
+  Serial.print("My IP address: ");
+  Serial.println(Ethernet.localIP());
+  
+  Serial.begin(9600); // Serial communication initialization
+  SPI.begin(); // SPI communication initialization
+  rfid.init(); // RFID module initialization
+  //lcd.setCursor(0,1);
+  //lcd.print("Waiting for Card");
+  Serial.println("Waiting for Card");
+}
+
+void loop(){
+   char buff[100] = "";
+    int len;
+  boolean USER_card = true;  // Here you can create a variable for each user
+  //Put here the another variable for user
+  
+  if (rfid.isCard()){ // valid card found
+    if (rfid.readCardSerial()){ // reads the card 
+     // Serial.println(rfid.readCardSerial());
+      data = rfid.serNum[0]; // stores t'he serial number
+      
+      
+     //data[1] = rfid.serNum[1];
+    //  data[2] = rfid.serNum[2];
+     // data[3] = rfid.serNum[3];
+     // data[4] = rfid.serNum[4];
+     Serial.println(data);
+      //Serial.println(data[1]);
+    }  
+ 
+  //for(int i=0; i<2; i++){
+  //  if(data != USER[i] ) USER_card = false; // if it is not a valid card, put false to this user
+    
+    // Here you can check the another allowed users, just put lines like above with the user name
+  //} 
+   // if (client.connect(server, 80)) {
+      
+    if (USER_card){
+      tempFile = fopen("/home/root/myserver/sample.json", "w");
+  timestamp = fopen("/home/root/myserver/timestamp.txt", "w");
+  
+  if(tempFile != NULL) {
+   
+      fprintf(tempFile, "[{\"id\":\"%d\",\"time\": \"", data);
+    
+      
+    }
+    fclose(tempFile);
+    
+    system("date | awk '{print $2,$3,$4;}' > /home/root/myserver/timestamp.txt");
+    
+    // Determine the filesize of timestamp.txt
+    timestamp = fopen("/home/root/myserver/timestamp.txt","r");
+   
+    // Read the File
+    fgets(buff, sizeof(buff), timestamp);
+    
+    // Remove newline
+    len = strlen(buff);
+    buff[len-1] = 0;   
+    
+    tempFile = fopen("/home/root/myserver/sample.json", "a");
+    fprintf(tempFile, "%s\" } ]", buff);
+    
+    fclose(timestamp);
+    fclose(tempFile);
+    Serial.println("Connection Successfull");
+    //client.print("GET http://example.com/arduino.php?v=");
+    //client.print(data[0]);client.print(data[1]);client.print(data[2]);client.print(data[3]);client.print(data[4]);
+    //client.println(" HTTP/1.0"); client.println("User-Agent: Arduino 1.0");
+    //client.println(); client.stop(); lcd.clear();
+    //lcd.print("USER!");
+    Serial.println("Hello USER!"); // print a message  
+    delay(1000);  
+  }
+  
+  /*
+  // another cards analysis put many blocks like this as many user you have
+  else if (USER2_card){
+    Serial.println("Connection Successfull");
+    client.print("GET http://example.com/arduino.php?v=");
+    client.print(data[0]);client.print(data[1]);client.print(data[2]);client.print(data[3]);client.print(data[4]);
+    client.println(" HTTP/1.0"); client.println("User-Agent: Arduino 1.0");
+    client.println(); client.stop(); lcd.clear();
+    lcd.print("USER2!");
+    Serial.println("Hello USER2!"); // print a message  
+    delay(1000);    
+  }
+  */
+  
+  else{ // if a card is not recognized
+   // lcd.clear();
+    //lcd.print("Card not");
+   // lcd.setCursor(0,1);
+   // lcd.print("recognized!");
+    Serial.println("Card not recognized!"); // print a message
+     delay(1000);
+  }
+  if (USER_card){// add another user using an logical or condition ||
+    // Welcome messages and access permission  
+   //lcd.setCursor(0,1);
+   //lcd.print("Access Granted!");
+    Serial.println("Access Granted!... Welcome!"); // print a message
+    delay(1000);
+  }
+  Serial.println();
+  //lcd.clear();
+ // lcd.print("    Welcome!");
+  //lcd.setCursor(0,1);
+  Serial.println("Waiting for Card");
+  //lcd.print("Waiting for Card");
+  //client.stop();
+  delay(1000);
+ // }
+ /* else{
+    Serial.println("Connection Unuccessfull");
+    lcd.clear();
+    lcd.print("Connection");
+    lcd.setCursor(0,1);
+    lcd.print("Unuccessful");
+    delay(1000);
+    lcd.clear();
+    lcd.print("Try Again!");
+    client.stop();
+    delay(1000);
+     }
+     */
+  }
+}
+  
+

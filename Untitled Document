@@ -1,0 +1,8 @@
+create table fac_login(
+    uname varchar(20) not null,
+    password varchar(20) not null,
+   facid int primary key);
+
+
+insert into fac_login(uname,password,facid) values('faculty1','cit123',1435);
+
